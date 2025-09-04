@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Navbar } from "../../components/Navbar/Navbar";
 import {MdAdd} from "react-icons/md"
-import Notecard from "../../components/Cards/Notecard";
 import AddEditNotes from "./AddEditNotes";
 import Modal from "react-modal"
+import Notecard from "../../components/Cards/NoteCard";
 const Home = () => {
     const [openAddEditModel,setOpenAddEditModel] = useState({
         isShown:false,
