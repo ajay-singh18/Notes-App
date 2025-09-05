@@ -19,24 +19,24 @@ try{
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.get("/",(req,res)=>{
     res.json({"hii":"hii"})
 })
 app.post("/create-account",async (req,res)=>{
     const {fullName,email,password} = req.body
     if(!fullName){
-        return res.status(401).json({"error":true , "msg":"Full Name is required"})
+        return res.status(401).json({"error":true , message:"Full Name is required"})
     }
     if(!email){
-       return res.status(401).json({"error":true , "msg":"Email is required"})
+       return res.status(401).json({"error":true , message:"Email is required"})
     }
     if(!password){
-       return res.status(401).json({"error":true , "msg":"Password is required"})
+       return res.status(401).json({"error":true , message:"Password is required"})
     }
     const isUser = await userModel.findOne({email})
     if(isUser){
-        return res.json({error:true,"msg": "User already exist"})
+        return res.json({error:true,message: "User already exist"})
     }
     const hashedPassword= await bcrypt.hash(password,10);
     const user = new userModel({
@@ -49,39 +49,38 @@ app.post("/create-account",async (req,res)=>{
     res.json({
         user,
         error:false,
-        "msg": "Registered successfully"
+        message: "Registered successfully"
     })
 })
 
 app.post("/login",async (req,res)=>{
     const {email,password} = req.body
     if(!email){
-        return res.status(400).json({ " msg " : " Email required"})
+        return res.status(400).json({ message : " Email required"})
     }
     if(!password){
-        return res.status(400).json({"msg": "Password required"})
+        return res.status(400).json({message: "Password required"})
     }
     const user = await userModel.findOne({email});
     if(!user){
-        return res.status(404).json("user not found")
+        return res.status(404).json({error:true, message: "user not found"})
     }
     const isMatched = await bcrypt.compare(password,user.password)
-    if(user.email == email && isMatched){
+    if(isMatched){
     const token = jwt.sign({id:user._id},secretKey,{expiresIn:"3600m"});
     return res.json({
         error:false,
         token,
-        msg:"Successfully logined",
+        message:"Successfully logined",
         email
     })
 }
     else{
-        return res.json({
+        return res.status(401).json({
             error:true,
             message: "incorrect credentials"
         })
     }
-    
 })
 // Get user
 app.get("/get-user",auth, async (req,res)=>{
@@ -128,7 +127,7 @@ app.post("/add-note",auth,async (req,res)=>{
     }catch(e){
         return res.json({
             error:true,
-            msg:" Internal server error"
+            message:" Internal server error"
         })
      }
 })
@@ -163,7 +162,7 @@ app.put("/edit-note/:noteId",auth,async (req,res)=>{
     }catch(e){
         return res.status(500).json({
             error:true,
-            "msg":"internal server error"
+            message:"internal server error"
         })
     }
 })
@@ -180,7 +179,7 @@ app.get("/get-all-notes",auth, async (req,res)=>{
     }catch(e){
         return res.status(500).json({
             error: true,
-            "msg": "Internal server error"
+            message: "Internal server error"
         })
     }
 })
@@ -205,7 +204,7 @@ app.delete("/delete-note/:noteId",auth,async (req,res)=>{
     }catch(e){
         return res.status(500).json({
             error: true,
-            "msg": "Internal server error"
+            message: "Internal server error"
         })
     }
 })
