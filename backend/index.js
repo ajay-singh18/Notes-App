@@ -19,7 +19,7 @@ try{
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: "*" }));
+app.use(cors());
 app.get("/",(req,res)=>{
     res.json({"hii":"hii"})
 })
@@ -45,9 +45,10 @@ app.post("/create-account",async (req,res)=>{
         password: hashedPassword
     })
     await user.save()
-    // const token = jwt.sign({user},secretKey)
+   const token = jwt.sign({ id: user._id }, secretKey, { expiresIn: "1d" });
     res.json({
         user,
+        token,
         error:false,
         message: "Registered successfully"
     })
@@ -88,7 +89,7 @@ app.get("/get-user",auth, async (req,res)=>{
    try{
      const user = await userModel.findOne({_id:userId})
     if(!user){
-        return res.status(404).json({
+        return res.status(401).json({
             error : true,
             message: "User not found"
         })
@@ -122,7 +123,8 @@ app.post("/add-note",auth,async (req,res)=>{
     await note.save();
     res.json({
         error:false,
-        msg: "note added successfully"
+        note,
+        message: "note added successfully"
     })
     }catch(e){
         return res.json({
