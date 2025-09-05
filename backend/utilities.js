@@ -8,7 +8,7 @@ const auth = (req,res,next)=>{
     if(!token) return res.status(401)
     const decoded = jwt.verify(token,secretKey)
     if(!decoded) return res.status(401)
-    req.user = decoded.user
+    req.userId = decoded.id
     next();
 }   
 export default auth;

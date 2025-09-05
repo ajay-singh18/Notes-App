@@ -7,6 +7,7 @@ dotenv.config()
 import bcrypt from "bcrypt"
 import userModel from "./models/userModel.js";
 import auth from "./utilities.js";
+import noteModel from "./models/noteModel.js";
 const secretKey = process.env.JWT_SECRET
 const url = process.env.MONGO_URL
 try{
@@ -44,11 +45,10 @@ app.post("/create-account",async (req,res)=>{
         password: hashedPassword
     })
     await user.save()
-    const token = jwt.sign({user},secretKey)
+    // const token = jwt.sign({user},secretKey)
     res.json({
         user,
         error:false,
-        token,
         "msg": "Registered successfully"
     })
 })
@@ -82,6 +82,160 @@ app.post("/login",async (req,res)=>{
         })
     }
     
+})
+// Get user
+app.get("/get-user",auth, async (req,res)=>{
+    const userId = req.userId
+   try{
+     const user = await userModel.findOne({_id:userId})
+    if(!user){
+        return res.status(404).json({
+            error : true,
+            message: "User not found"
+        })
+    }
+    return res.json({
+        fullName: user.fullName,
+        email: user.email,
+        createdOn: user.createdOn,
+        userId : user._id
+    })
+   }catch(e){
+     return res.status(500).json({
+        error: true,
+        message: "Internal server error"
+     })
+   }
+})
+// Add note
+app.post("/add-note",auth,async (req,res)=>{
+    const {title,content,tags} = req.body
+    const userId = req.userId
+    if(!title) return res.status(400).json({msg:"title required"})
+    if(!content) return res.status(400).json({msg:"content required"})
+   try{
+     const note = new noteModel({
+        title,
+        content,
+        tags,
+        userId: userId
+     })
+    await note.save();
+    res.json({
+        error:false,
+        msg: "note added successfully"
+    })
+    }catch(e){
+        return res.json({
+            error:true,
+            msg:" Internal server error"
+        })
+     }
+})
+// Edit note
+app.put("/edit-note/:noteId",auth,async (req,res)=>{
+    const noteId = req.params.noteId
+    const userId = req.userId
+    const {title,content,tags,isPinned} = req.body
+    if(!title && !content && !tags){
+        return res.status(400).json({
+            msg: "not change provided"
+        })
+    }
+    try{
+        const note = await noteModel.findOne({_id:noteId , userId})
+    if(!note) {
+
+        return res.status(404).json({
+            error:true,
+            "msg": "not note found"
+        })
+    }
+    if(title) note.title = title
+    if(content) note.content = content
+    if(tags) note.tags = tags
+    if(isPinned) note.isPinned = isPinned
+    await note.save();
+    return res.json({
+        error:false,
+        "msg":"Note updated Successfully"
+    })
+    }catch(e){
+        return res.status(500).json({
+            error:true,
+            "msg":"internal server error"
+        })
+    }
+})
+// Get all notes
+app.get("/get-all-notes",auth, async (req,res)=>{
+    const userId = req.userId
+    try{
+        const notes = await noteModel.find({userId}).sort({isPinned:-1})
+        return res.json({
+            error:false,
+            notes,
+            "msg":"All notes retrieved seccessfully"
+        })
+    }catch(e){
+        return res.status(500).json({
+            error: true,
+            "msg": "Internal server error"
+        })
+    }
+})
+// Delete note
+app.delete("/delete-note/:noteId",auth,async (req,res)=>{
+    const noteId = req.params.noteId
+    const userId = req.userId
+    try{
+         const note = await noteModel.findOne({_id:noteId,userId})
+         if(!note){
+            return res.status(404).json({
+                error:true,
+                "msg":"Note not found"
+            })
+         }
+         await noteModel.deleteOne({_id:noteId, userId})
+         return res.json({
+            error: true,
+            "msg": "Note deleted successfully"
+         })
+        
+    }catch(e){
+        return res.status(500).json({
+            error: true,
+            "msg": "Internal server error"
+        })
+    }
+})
+// IsPinned
+
+app.put("/update-note-pinned/:noteId",auth, async (req,res)=>{
+    const userId = req.userId
+    const isPinned = req.body.isPinned
+    const noteId = req.params.noteId
+    try{
+        const note = await noteModel.findOne({ _id : noteId,userId})
+        if(!note){
+        return res.status(400).json({
+            error: true,
+            message: "Note not found"
+        })}
+        note.isPinned = isPinned ;
+        await note.save()
+        return res.json({
+            error: false,
+            note,
+            message: "Note updated successfully"
+        })
+    
+    }catch(e){
+        return res.status(500).json({
+            error: true,
+            message: "Internal server error"
+        })
+    }
 })
 
 app.listen(3000);

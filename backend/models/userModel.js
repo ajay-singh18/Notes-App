@@ -5,7 +5,7 @@ const userSchema = new Schema({
     fullName:{type:String},
     email: {type:String,unique:true},
     password: {type:String},
-    createdOn : {type:Date, defaut: new Date().getTime()}
+    createdOn : {type:Date, default: new Date().getTime()}
 })
 const userModel = mongoose.model("User",userSchema)
 export default userModel
