@@ -5,7 +5,7 @@ import AddEditNotes from "./AddEditNotes";
 import Modal from "react-modal"
 import NoNotes from "../../components/Cards/NoNotes";
 import NoSearchResults from "../../components/Cards/NoSearchResults";
-import Notecard from "../../components/Cards/NoteCard";
+import Notecard from "../../components/Cards/Notecard";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 const Home = () => {
