@@ -5,9 +5,9 @@ import axiosInstance from '../../utils/axiosInstance'
 
 
 const AddEditNotes = ({onClose ,getAllNotes,type, noteData}) => {
-    const [title, setTitle] = useState("")
-    const [content,setContent] = useState("")
-    const  [tags,setTags] = useState([])
+    const [title, setTitle] = useState(noteData?.title || "")
+    const [content,setContent] = useState(noteData?.content || "")
+    const  [tags,setTags] = useState(noteData?.tags || [])
     const [error,setError] = useState(null)
     // Add Note
     const addNewNote = async ()=>{
@@ -28,7 +28,23 @@ const AddEditNotes = ({onClose ,getAllNotes,type, noteData}) => {
   }
 }
     // Edit Note
-    const editNote = async ()=>{}
+    const editNote = async ()=>{
+        const noteId = noteData._id
+try{
+       const response = await axiosInstance.put("/edit-note/" + noteId,{
+        title,
+        content,
+        tags
+    })
+    if(response.data && response.data.note){
+      getAllNotes();
+      onClose();
+    }
+  }catch(error){
+    if(error.response && error.response.data && error.response.data.message){
+        setError(error.response.data.message);
+    }
+  }    }
     const handleAddNote = ()=>{
         if(!title){
             setError("Please enter the title")
@@ -46,42 +62,76 @@ const AddEditNotes = ({onClose ,getAllNotes,type, noteData}) => {
         }
     }
   return (
-    <div className='relative'>
-        <button
-        className='w-10 h-10 rounded-full flex items-center justify-center absolute -top-3 -right-3 hover:bg-slate-50'
-        onClick={onClose}
-        >
-            <MdClose className='text-xl text-slate-400' />
+   <div className="relative bg-white rounded-2xl p-8 shadow-2xl border border-gray-100 animate-fadeIn">
+  {/* Close Button */}
+  <button
+    className="w-9 h-9 rounded-full flex items-center justify-center 
+               absolute -top-4 -right-4 bg-gradient-to-br from-gray-100 to-gray-200 
+               hover:from-gray-200 hover:to-gray-300 shadow-md 
+               transition-all duration-200"
+    onClick={onClose}
+  >
+    <MdClose className="text-lg text-gray-600 hover:text-gray-800 transition" />
+  </button>
 
-        </button>
-        <div className='flex flex-col gap-2'>
-            <label className='input-label'>TITLE</label>
-            <input type="text"
-                   className='text-2xl text-slate-950 outline-none'
-                   placeholder='Go To Gym At 5'
-                   value={title}
-                   onChange={(e)=> setTitle(e.target.value)}
-            />
-        </div>
-        <div className='flex flex-col gap-2 mt-4'>
-            <label className='input-label'>CONTENT</label>
-            <textarea 
-                 type = "text"
-                 className='text-sm text-slate-950 outline-none bg-slate-50 p-2 rounded'
-                 placeholder='Content'
-                 rows={10}
-                 value={content}
-                 onChange={e => setContent(e.target.value)}
-            ></textarea>
+  {/* Title */}
+  <div className="flex flex-col gap-2">
+    <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">
+      Title
+    </label>
+    <input
+      type="text"
+      className="text-2xl font-semibold text-gray-900 outline-none 
+                 border-b border-gray-300 focus:border-purple-500 
+                 transition-colors bg-transparent pb-1"
+      placeholder="Go To Gym At 5"
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+    />
+  </div>
 
-        </div>
-        <div className='mt-3'>
-            <label className='input-label'>TAGS</label>
-            <TagInput tags = {tags}  setTags={setTags} />
-        </div>
-          {error? <p className='text-red-500 text-xs pt-4 '>{error}</p>:""}
-        <button className='btn-primary font-medium mt-5 p-3' onClick={handleAddNote}>ADD</button>
-    </div>
+  {/* Content */}
+  <div className="flex flex-col gap-2 mt-6">
+    <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">
+      Content
+    </label>
+    <textarea
+      className="text-sm text-gray-700 outline-none bg-gradient-to-br from-gray-50 to-gray-100 
+                 border border-gray-200 rounded-xl p-4 
+                 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 
+                 transition resize-none shadow-sm"
+      placeholder="Write your note content here..."
+      rows={8}
+      value={content}
+      onChange={(e) => setContent(e.target.value)}
+    ></textarea>
+  </div>
+
+  {/* Tags */}
+  <div className="mt-5">
+    <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest">
+      Tags
+    </label>
+    <TagInput tags={tags} setTags={setTags} />
+  </div>
+
+  {/* Error */}
+  {error && <p className="text-red-500 text-xs pt-3">{error}</p>}
+
+  {/* Submit Button */}
+  <button
+    className="w-full mt-6 py-3 rounded-xl 
+               bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500
+               text-white font-medium shadow-md hover:shadow-xl 
+               hover:scale-[1.02] active:scale-[0.98]
+               transition-all duration-200"
+    onClick={handleAddNote}
+  >
+    {type === "edit" ? "Update Note ✏️" : "Add Note ➕"}
+  </button>
+</div>
+
+
   )
 }
 

@@ -3,6 +3,8 @@ import { Navbar } from "../../components/Navbar/Navbar";
 import {MdAdd} from "react-icons/md"
 import AddEditNotes from "./AddEditNotes";
 import Modal from "react-modal"
+import NoNotes from "../../components/Cards/NoNotes";
+import NoSearchResults from "../../components/Cards/NoSearchResults";
 import Notecard from "../../components/Cards/NoteCard";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
@@ -15,6 +17,10 @@ const Home = () => {
     const [userInfo,setUserInfo] = useState(null)
     const [allNotes,setAllNotes] = useState([])
     const navigate = useNavigate()
+    const [isSearch,setIsSearch] = useState(false)
+    const [searchQuery, setSearchQuery] = useState("");  
+
+
     const getUserInfo = async ()=>{
     try {
       const response = await axiosInstance.get("/get-user")
@@ -32,7 +38,7 @@ const Home = () => {
   // Get all notes
   const getAllNotes = async ()=>{
     try {
-    const response = await axiosInstance.get("get-all-notes")
+    const response = await axiosInstance.get("/get-all-notes")
     if(response.data && response.data.notes){
       setAllNotes(response.data.notes)
     }
@@ -40,7 +46,63 @@ const Home = () => {
     console.log("An unexpected error occured. Please try again");
   }
   }
+  
+  const handleEdit = (noteDetails) =>{
+    setOpenAddEditModel({
+      isShown: true,
+      data:noteDetails,
+      type: "edit"
+    })
+  }
+  // Delete Note
+  const deleteNote = async (data) =>{
+     const noteId = data._id
+try{
+       const response = await axiosInstance.delete("/delete-note/" + noteId)
+    if(response.data && response.data.note){
+      getAllNotes();
+    }
+  }catch(error){
+    if(error.response && error.response.data && error.response.data.message){
+        console.log(error.response.data.message);
+    }
+  }    
+  }
 
+  const onSearchNote = async (query)=>{
+    try {
+      const response = await axiosInstance.get("/search-note",{
+        params:{query}
+      })
+      if(response.data && response.data.notes){
+        setIsSearch(true)
+        setSearchQuery(query)
+        setAllNotes(response.data.notes)
+      }
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+  const handleClearSearch = async ()=>{
+      setIsSearch(false);
+      getAllNotes()
+  }
+  const updatePinned = async(data)=>{
+const noteId = data._id
+try{
+       const response = await axiosInstance.put("/update-note-pinned/" + noteId,{
+        isPinned: !data.isPinned
+       })
+    if(response.data && response.data.note){
+      getAllNotes();
+    }
+  }catch(error){
+    if(error.response && error.response.data && error.response.data.message){
+        console.log(error.response.data.message);
+    }
+  }        
+  }
   useEffect(()=>{
     getUserInfo()
     getAllNotes()
@@ -48,10 +110,11 @@ const Home = () => {
   },[])
   return (
     <>
-      <Navbar userInfo = {userInfo} />
+      <Navbar userInfo = {userInfo} onSearchNote = {onSearchNote} handleClearSearch = {handleClearSearch} />
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-4 mt-8">
-          {allNotes.map((item)=>(
+         {allNotes.length > 0 ?(
+           allNotes?.map((item)=>(
             <Notecard
             key= {item._id}
             title={item.title}
@@ -59,12 +122,17 @@ const Home = () => {
             content= {item.content}
             tags= {item.tags}
             isPinned= {item.isPinned}
-            onEdit={() => {}}
-            onDelete={() => {}}
-            onPinNote={() => {}}
+            onEdit={() => handleEdit(item)}
+            onDelete={() => deleteNote(item)}
+            onPinNote={() => updatePinned(item)}
           />
-          ))}
+          ))
           
+         ): isSearch ? (
+    <NoSearchResults query={searchQuery} /> 
+  ) : (
+    <NoNotes />
+  )} 
         </div>
       </div>
       <button className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10" onClick={()=>{
@@ -85,7 +153,7 @@ const Home = () => {
             },
         }}
         contentLabel = ""
-        className = "w-[40%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-scroll"
+        className = "w-[40%] max-h-[550px] bg-white rounded-md mx-auto mt-14 p-5 overflow-scroll"
         >
       <AddEditNotes 
         type = {openAddEditModel.type}

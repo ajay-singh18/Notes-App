@@ -140,7 +140,7 @@ app.put("/edit-note/:noteId",auth,async (req,res)=>{
     const {title,content,tags,isPinned} = req.body
     if(!title && !content && !tags){
         return res.status(400).json({
-            msg: "not change provided"
+            message: "not change provided"
         })
     }
     try{
@@ -149,7 +149,7 @@ app.put("/edit-note/:noteId",auth,async (req,res)=>{
 
         return res.status(404).json({
             error:true,
-            "msg": "not note found"
+            message: "not note found"
         })
     }
     if(title) note.title = title
@@ -159,7 +159,8 @@ app.put("/edit-note/:noteId",auth,async (req,res)=>{
     await note.save();
     return res.json({
         error:false,
-        "msg":"Note updated Successfully"
+        note,
+        message:"Note updated Successfully"
     })
     }catch(e){
         return res.status(500).json({
@@ -194,13 +195,14 @@ app.delete("/delete-note/:noteId",auth,async (req,res)=>{
          if(!note){
             return res.status(404).json({
                 error:true,
-                "msg":"Note not found"
+                message:"Note not found"
             })
          }
          await noteModel.deleteOne({_id:noteId, userId})
          return res.json({
             error: true,
-            "msg": "Note deleted successfully"
+            note,
+            message: "Note deleted successfully"
          })
         
     }catch(e){
@@ -235,6 +237,36 @@ app.put("/update-note-pinned/:noteId",auth, async (req,res)=>{
         return res.status(500).json({
             error: true,
             message: "Internal server error"
+        })
+    }
+})
+// Search Query
+app.get("/search-note",auth,async (req,res)=>{
+    const userId = req.userId
+    const {query} = req.query
+    if(!query){
+        return res.status(400).json({
+            error:true,           
+            message: "Search query is required"
+        })
+    }
+    try{
+        const matchingNotes = await noteModel.find({
+            userId,
+            $or:[
+                {title:{ $regex : new RegExp(query,"i")}},
+                {content: { $regex: new RegExp(query,"i")}},
+            ],
+        });
+        return res.json({
+            error: false,
+             notes: matchingNotes,
+             message: "Notes matching the search query retrieved successfully"
+        })
+    }catch(error){
+        return res.status(500).json({
+            error: true,
+            message: "Internal Server Error"
         })
     }
 })

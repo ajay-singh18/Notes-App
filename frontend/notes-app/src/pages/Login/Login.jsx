@@ -41,26 +41,62 @@ const Login = () => {
   return (
     <div>
         <Navbar/>
-        <div className='flex items-center justify-center mt-28'>
-            <div className='w-96 border rounded bg-white px-7 py-10'> 
-                <form onSubmit={handleLogin}>
-                    <h4 className='text-2xl mb-7' >Login</h4>
-                    <input type="text" placeholder='Email' className='input-box'
-                    value={email}
-                    onChange={(e)=>setEmail(e.target.value)}
-                     />
-                    <PasswordInput value={password}
-                    onChange={(e)=>setPassword(e.target.value)}
-                    />
-                    {error && <p className='text-red-500 text-xs pb-1'>{error}</p>}
-                    <button type='submit' className='btn-primary'>Login</button>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-500 px-4">
+  <div className="w-96 bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl px-8 py-10 border border-white/20">
+    <form onSubmit={handleLogin}>
+      {/* Heading */}
+      <h4 className="text-3xl font-bold text-gray-900 mb-2 text-center">
+        Welcome Back
+      </h4>
+      <p className="text-sm text-gray-700 mb-8 text-center">
+        Login to continue managing your notes
+      </p>
 
-                    <p className='text-sm text-center mt-4'> Not registed yet?{""}
-                        <Link to={"/signup"} className='font-medium text-primary underline'>Create an account</Link>
-                    </p>
-                </form>
-            </div>
-        </div>
+      {/* Email Input */}
+      <input
+        type="text"
+        placeholder="Email"
+        className="w-full px-4 py-3 mb-4 rounded-lg border border-gray-300 
+                   focus:border-purple-500 focus:ring-2 focus:ring-purple-200 
+                   outline-none transition text-sm bg-white/70 backdrop-blur-sm"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+
+      {/* Password Input */}
+      <PasswordInput
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      {/* Error */}
+      {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
+
+      {/* Login Button */}
+      <button
+        type="submit"
+        className="w-full mt-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 
+                   text-white font-medium shadow-lg hover:scale-[1.02] transition-transform duration-200"
+      >
+        Login
+      </button>
+
+      {/* Signup Link */}
+      <p className="text-sm text-center mt-6 text-gray-800">
+        Not registered yet?{" "}
+        <Link
+          to={"/signup"}
+          className="font-medium text-purple-700 hover:underline"
+        >
+          Create an account
+        </Link>
+      </p>
+    </form>
+  </div>
+</div>
+
+
+
     </div>
   )
 }
