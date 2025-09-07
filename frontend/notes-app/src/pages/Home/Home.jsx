@@ -154,25 +154,36 @@ try{
 </button>
 
       <Modal
-        isOpen = {openAddEditModel.isShown}
-        onRequestClose = {()=>{}}
-        style = {{
-            overlay:{
-                backgroundColor: "rgba(0,0,0,0.2)",
-            },
-        }}
-        contentLabel = ""
-        className = "w-[40%] max-h-[550px] bg-white rounded-md mx-auto mt-14 p-5 overflow-scroll"
-        >
-      <AddEditNotes 
-        type = {openAddEditModel.type}
-        noteData = {openAddEditModel.data}
-        onClose = {()=>{
-        setOpenAddEditModel({isShown:false,type:"add", data: null})
-      }}
-       getAllNotes = {getAllNotes}
-      />
-      </Modal>
+  isOpen={openAddEditModel.isShown}
+  onRequestClose={() => {}}
+  style={{
+    overlay: {
+      backgroundColor: "rgba(0,0,0,0.3)", // darker for focus
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "1rem",
+    },
+  }}
+  contentLabel=""
+  className="
+    w-[95%] sm:w-[80%] md:w-[60%] lg:w-[40%] 
+    max-h-[90vh] bg-white rounded-xl 
+    p-5 sm:p-6 md:p-8 
+    overflow-y-auto shadow-2xl
+    animate-fadeIn
+  "
+>
+  <AddEditNotes
+    type={openAddEditModel.type}
+    noteData={openAddEditModel.data}
+    onClose={() => {
+      setOpenAddEditModel({ isShown: false, type: "add", data: null });
+    }}
+    getAllNotes={getAllNotes}
+  />
+</Modal>
+
     </>
   );
 };
