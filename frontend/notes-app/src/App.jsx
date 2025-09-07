@@ -2,9 +2,10 @@ import Home from "./pages/Home/Home"
 import { BrowserRouter as Router , Routes, Route,Navigate } from "react-router-dom"
 import Login from "./pages/Login/Login"
 import SignUp from "./pages/SignUp/SignUp"
+import Footer from "./components/Footer"
 function RouteComponent(){
   return (
-    <>
+    <div className="min-h-screen">
       <Router>
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
@@ -12,14 +13,17 @@ function RouteComponent(){
           <Route path="/login" element = {<Login/>} ></Route>
           <Route path="/signup" element = {<SignUp/>} ></Route>
         </Routes>
+        
       </Router>
-    </>
+      
+    </div>
   )
 }
 function App() {
   return (
     <>
     {<RouteComponent/>}
+    <Footer/>
     </>
   )
 }

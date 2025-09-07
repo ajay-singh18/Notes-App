@@ -112,7 +112,8 @@ try{
     <>
       <Navbar userInfo = {userInfo} onSearchNote = {onSearchNote} handleClearSearch = {handleClearSearch} />
       <div className="container mx-auto">
-        <div className="grid grid-cols-3 gap-4 mt-8">
+      {/* <div className="min-h-full"> */}
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
          {allNotes.length > 0 ?(
            allNotes?.map((item)=>(
             <Notecard
@@ -135,15 +136,23 @@ try{
   )} 
         </div>
       </div>
-      <button className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10" onClick={()=>{
-        setOpenAddEditModel({
-            isShown:true,
-            type:"add",
-            data:null
-        })
-      }}>
-        <MdAdd className= "text-[32px] text-white " />
-      </button>
+      <button
+  className="w-16 h-16 flex items-center justify-center rounded-full 
+             bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 
+             shadow-lg hover:shadow-2xl transform hover:scale-110 
+             transition-all duration-300 ease-in-out 
+             absolute right-10 bottom-20"
+  onClick={() => {
+    setOpenAddEditModel({
+      isShown: true,
+      type: "add",
+      data: null,
+    });
+  }}
+>
+  <MdAdd className="text-[32px] text-white drop-shadow-sm" />
+</button>
+
       <Modal
         isOpen = {openAddEditModel.isShown}
         onRequestClose = {()=>{}}

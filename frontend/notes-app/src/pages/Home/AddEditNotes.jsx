@@ -62,8 +62,8 @@ try{
         }
     }
   return (
-   <div className="relative bg-white rounded-2xl p-8 shadow-2xl border border-gray-100 animate-fadeIn">
-  {/* Close Button */}
+<div className="relative bg-white rounded-2xl p-6 sm:p-8 shadow-2xl border border-gray-100 animate-fadeIn 
+                w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto">  {/* Close Button */}
   <button
     className="w-9 h-9 rounded-full flex items-center justify-center 
                absolute -top-4 -right-4 bg-gradient-to-br from-gray-100 to-gray-200 
