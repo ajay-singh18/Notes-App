@@ -22,9 +22,6 @@ app.use(express.json());
 app.use(cors({
     origin:"*"
 }));
-app.get("/",(req,res)=>{
-    res.json({"hii":"hii"})
-})
 app.post("/create-account",async (req,res)=>{
     const {fullName,email,password} = req.body
     if(!fullName){
