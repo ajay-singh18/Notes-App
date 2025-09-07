@@ -45,9 +45,10 @@ const Login = () => {
   <div className="w-96 bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl px-8 py-10 border border-white/20">
     <form onSubmit={handleLogin}>
       {/* Heading */}
-      <h4 className="text-3xl font-bold text-gray-900 mb-2 text-center">
-        Welcome Back
-      </h4>
+      <h4 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text 
+    bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 drop-shadow-lg text-center mb-4">
+  Welcome to Almanaco 🚀
+</h4>
       <p className="text-sm text-gray-700 mb-8 text-center">
         Login to continue managing your notes
       </p>
