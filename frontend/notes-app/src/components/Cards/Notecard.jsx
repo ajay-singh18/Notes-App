@@ -1,7 +1,7 @@
 import React from "react";
 import { MdCreate, MdDelete, MdOutlinePushPin } from "react-icons/md";
 import moment from "moment"
-const Notecard = ({
+const NoteCard = ({
   title,
   date,
   content,
@@ -71,4 +71,4 @@ const Notecard = ({
   );
 };
 
-export default Notecard;
+export default NoteCard;

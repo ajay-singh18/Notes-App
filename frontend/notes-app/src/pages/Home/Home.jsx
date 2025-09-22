@@ -7,7 +7,7 @@ import NoNotes from "../../components/Cards/NoNotes";
 import NoSearchResults from "../../components/Cards/NoSearchResults";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
-import Notecard from "../../components/Cards/NoteCard";
+import NoteCard from "../../components/Cards/NoteCard";
 
 const Home = () => {
     const [openAddEditModel,setOpenAddEditModel] = useState({
@@ -117,7 +117,7 @@ try{
          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
          {allNotes.length > 0 ?(
            allNotes?.map((item)=>(
-            <Notecard
+            <NoteCard
             key= {item._id}
             title={item.title}
             date={item.createdOn}
