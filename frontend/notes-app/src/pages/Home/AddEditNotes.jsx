@@ -84,7 +84,7 @@ try{
       className="text-2xl font-semibold text-gray-900 outline-none 
                  border-b border-gray-300 focus:border-purple-500 
                  transition-colors bg-transparent pb-1"
-      placeholder="Go To Gym At 5"
+      placeholder="Write your title here..."
       value={title}
       onChange={(e) => setTitle(e.target.value)}
     />
